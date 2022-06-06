@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
         maven { url "https://repo.grails.org/grails/core" }
     }
     dependencies {
@@ -10,35 +10,68 @@ buildscript {
 }
 
 group "org.grails.plugins"
-version "4.0.1"
+version "5.0.0-SNAPSHOT"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:'java-library'
 apply plugin:"org.grails.grails-plugin"
-apply plugin:"org.grails.grails-plugin-publish"
+apply plugin:"org.grails.internal.grails-plugin-publish"
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
     maven { url "https://repo.grails.org/grails/core" }
 }
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+configurations {
+    documentation
+}
 
 dependencies {
-    api "org.apache.commons:commons-lang3:3.0"
-    api "org.grails:grails-web"
-    api "org.grails:grails-plugin-domain-class"
-    implementation "org.grails.plugins:async"
-    implementation "javax.servlet:javax.servlet-api:3.0.1"
-    testImplementation "javax.servlet:javax.servlet-api:3.0.1"
-    testImplementation("org.spockframework:spock-core:${spockVersion}") {
+    if (configurations.find { it.name == 'documentation' }) {
+        documentation 'info.picocli:picocli:3.8.0'
+        documentation "org.fusesource.jansi:jansi:1.18"
+        documentation "jline:jline:2.14.6"
+        documentation "com.github.javaparser:javaparser-core:3.15.14"
+        documentation "org.codehaus.groovy:groovy:$groovyVersion"
+        documentation "org.codehaus.groovy:groovy-ant:$groovyVersion"
+        documentation "org.codehaus.groovy:groovy-cli-picocli:$groovyVersion"
+    }
+
+    api "org.apache.commons:commons-lang3:3.10"
+    api "org.grails:grails-web:$grailsVersion"
+    api "org.grails:grails-plugin-domain-class:$grailsVersion"
+    implementation "org.grails.plugins:async:$grailsAsyncPluginVersion"
+    implementation "javax.servlet:javax.servlet-api:4.0.1"
+    testImplementation "javax.servlet:javax.servlet-api:4.0.1"
+    testImplementation("org.spockframework:spock-core:$spockVersion") {
         exclude module:'groovy-all'
     }
 }
 
+def DOCUMENTATION_GROUP = 'Documentation'
+
+tasks.withType(Groovydoc) {
+    group = DOCUMENTATION_GROUP
+    docTitle = "Grails Converter Plugin"
+    destinationDir = project.file("build/docs/api")
+    def files = []
+    project.rootProject.subprojects
+            .findAll { !it.name != 'docs' && !it.name.startsWith('examples') }
+            .each { subproject ->
+                if(subproject.file('src/main/groovy').exists()) {
+                    files += subproject.files("src/main/groovy")
+                }
+            }
+    if(project.file('src/main/groovy').exists()) {
+        files += project.files("src/main/groovy")
+    }
+    source = files
+    classpath += configurations.documentation
+}
 
 grailsPublish {
     userOrg = "grails"
