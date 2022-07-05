@@ -5,12 +5,12 @@ buildscript {
         maven { url "https://repo.grails.org/grails/core" }
     }
     dependencies {
-        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+        classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
     }
 }
 
 group "org.grails.plugins"
-version "5.0.0-SNAPSHOT"
+version project.projectVersion
 
 apply plugin:"eclipse"
 apply plugin:"idea"
