@@ -41,7 +41,7 @@ dependencies {
         documentation "org.codehaus.groovy:groovy-cli-picocli:$groovyVersion"
     }
 
-    api "org.apache.commons:commons-lang3:3.10"
+    api "org.apache.commons:commons-lang3:3.12.0"
     api "org.grails:grails-web:$grailsVersion"
     api "org.grails:grails-plugin-domain-class:$grailsVersion"
     implementation "org.grails.plugins:async:$grailsAsyncPluginVersion"
