@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2008 the original author or authors.
+ * Copyright 2004-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,14 +34,17 @@ import org.grails.web.converters.Converter;
 import org.grails.web.converters.marshaller.ObjectMarshaller;
 import org.grails.web.converters.marshaller.ProxyUnwrappingMarshaller;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.Assert;
 
 /**
  * @author Siegfried Puchbauer
+ * @author Michael Yan
  * @since 1.1
  */
-public class ConvertersConfigurationInitializer implements ApplicationContextAware, GrailsApplicationAware, InitializingBean {
+public class ConvertersConfigurationInitializer implements ApplicationContextAware, GrailsApplicationAware, InitializingBean, SmartInitializingSingleton {
 
     public static final String SETTING_CONVERTERS_JSON_DATE = "grails.converters.json.date";
     public static final String SETTING_CONVERTERS_JSON_DEFAULT_DEEP = "grails.converters.json.default.deep";
@@ -52,7 +55,6 @@ public class ConvertersConfigurationInitializer implements ApplicationContextAwa
     public static final String SETTING_CONVERTERS_JSON_PRETTY_PRINT = "grails.converters.json.pretty.print";
     public static final String SETTING_CONVERTERS_JSON_CACHE_OBJECTS = "grails.converters.json.cacheObjectMarshallerSelectionByClass";
     public static final String SETTING_CONVERTERS_XML_DEEP = "grails.converters.xml.default.deep";
-
 
     private ApplicationContext applicationContext;
     private GrailsApplication grailsApplication;
@@ -67,10 +69,16 @@ public class ConvertersConfigurationInitializer implements ApplicationContextAwa
 
     public final Log LOG = LogFactory.getLog(ConvertersConfigurationInitializer.class);
 
-    public void afterPropertiesSet() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
+		Assert.notNull(this.applicationContext, "ApplicationContext must be set");
+    }
+
+    @Override
+    public void afterSingletonsInstantiated() {
         initialize();
     }
-    
+
     public void initialize() {
         if(LOG.isDebugEnabled()) {
             LOG.debug("Initializing Converters Default Configurations...");
