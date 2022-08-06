@@ -19,6 +19,7 @@ import grails.util.GrailsNameUtils;
 import grails.util.GrailsWebUtil;
 import groovy.lang.Closure;
 import groovy.util.BuilderSupport;
+import groovy.xml.slurpersupport.GPathResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -311,10 +312,10 @@ public class XML extends AbstractConverter<XMLStreamWriter> implements IncludeEx
      * Parses the given XML
      *
      * @param source a String containing some XML
-     * @return a groovy.util.XmlSlurper
+     * @return a groovy.xml.XmlSlurper
      * @throws ConverterException
      */
-    public static Object parse(String source) throws ConverterException {
+    public static GPathResult parse(String source) throws ConverterException {
         try {
             return SpringIOUtils.createXmlSlurper().parseText(source);
         }
@@ -328,10 +329,10 @@ public class XML extends AbstractConverter<XMLStreamWriter> implements IncludeEx
      *
      * @param is       an InputStream to read from
      * @param encoding the Character Encoding to use
-     * @return a groovy.util.XmlSlurper
+     * @return a groovy.xml.XmlSlurper
      * @throws ConverterException
      */
-    public static Object parse(InputStream is, String encoding) throws ConverterException {
+    public static GPathResult parse(InputStream is, String encoding) throws ConverterException {
         try {
             InputStreamReader reader = new InputStreamReader(is, encoding);
             return SpringIOUtils.createXmlSlurper().parse(reader);
@@ -345,7 +346,7 @@ public class XML extends AbstractConverter<XMLStreamWriter> implements IncludeEx
      * Parses the give XML (read from the POST Body of the Request)
      *
      * @param request an HttpServletRequest
-     * @return a groovy.util.XmlSlurper
+     * @return a groovy.xml.XmlSlurper
      * @throws ConverterException
      */
     public static Object parse(HttpServletRequest request) throws ConverterException {
